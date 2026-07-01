@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <title>Solicitar Orcamento de Obra</title>
+</h:head>
+<h:body>
+    <h2>Calculadora de Materiais para Obra Residencial</h2>
+    <h:messages globalOnly="true" />
+
+    <h:form id="formOrcamento">
+
+        <h3>1. Identificacao</h3>
+        <h:outputLabel for="nome" value="Seu nome: " />
+        <h:inputText id="nome" value="#{orcamentoBean.nomeUsuario}" required="true" />
+
+        <h3>2. Comodos da planta</h3>
+        <h:panelGrid columns="5">
+            <h:outputLabel value="Nome do comodo" />
+            <h:outputLabel value="Largura (m)" />
+            <h:outputLabel value="Comprimento (m)" />
+            <h:outputLabel value="Altura (m)" />
+            <h:outputLabel value="" />
+
+            <h:inputText value="#{orcamentoBean.comodoAtual.nome}" />
+            <h:inputText value="#{orcamentoBean.comodoAtual.largura}" />
+            <h:inputText value="#{orcamentoBean.comodoAtual.comprimento}" />
+            <h:inputText value="#{orcamentoBean.comodoAtual.altura}" />
+            <h:commandButton value="Adicionar comodo" action="#{orcamentoBean.adicionarComodo}" />
+        </h:panelGrid>
+
+        <ui:repeat value="#{orcamentoBean.comodos}" var="comodo">
+            <h4>Comodo: #{comodo.nome} (#{comodo.largura}m x #{comodo.comprimento}m)</h4>
+
+            <h:panelGrid columns="6">
+                <h:outputLabel value="Parede" />
+                <h:outputLabel value="Comprimento (m)" />
+                <h:outputLabel value="Espessura (m)" />
+                <h:outputLabel value="Tem porta?" />
+                <h:outputLabel value="Tem janela?" />
+                <h:outputLabel value="" />
+
+                <h:inputText value="#{orcamentoBean.paredeAtual.nome}" />
+                <h:inputText value="#{orcamentoBean.paredeAtual.comprimento}" />
+                <h:inputText value="#{orcamentoBean.paredeAtual.largura}" />
+                <h:selectBooleanCheckbox value="#{orcamentoBean.paredeAtual.temPorta}" />
+                <h:selectBooleanCheckbox value="#{orcamentoBean.paredeAtual.temJanela}" />
+                <h:commandButton value="Adicionar parede"
+                                  action="#{orcamentoBean.adicionarParede(comodo)}" />
+            </h:panelGrid>
+
+            <h:dataTable value="#{comodo.paredes}" var="parede" border="1">
+                <h:column>
+                    <f:facet name="header">Parede</f:facet>
+                    #{parede.nome}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Comprimento</f:facet>
+                    #{parede.comprimento}
+                </h:column>
+                <h:column>
+                    <h:commandButton value="Remover"
+                                      action="#{orcamentoBean.removerParede(comodo, parede)}" />
+                </h:column>
+            </h:dataTable>
+        </ui:repeat>
+
+        <h3>3. Parametros de calculo</h3>
+        <h:panelGrid columns="2">
+            <h:outputLabel value="Altura da viga baldrame (m)" />
+            <h:inputText value="#{orcamentoBean.alturaViga}" />
+            <h:outputLabel value="Altura da parede (m)" />
+            <h:inputText value="#{orcamentoBean.alturaParede}" />
+            <h:outputLabel value="Altura do tijolo (m)" />
+            <h:inputText value="#{orcamentoBean.alturaTijolo}" />
+            <h:outputLabel value="Comprimento do tijolo (m)" />
+            <h:inputText value="#{orcamentoBean.comprimentoTijolo}" />
+        </h:panelGrid>
+
+        <h:commandButton value="Calcular Orcamento" action="#{orcamentoBean.calcularOrcamento}" />
+
+        <h:panelGroup rendered="#{orcamentoBean.orcamentoCalculado != null}">
+            <h3>Resultado</h3>
+            <p>Numero do orcamento: #{orcamentoBean.orcamentoCalculado.numeroOrcamento}</p>
+            <p>Volume de concreto: #{orcamentoBean.orcamentoCalculado.volumeConcretoTotal} m3</p>
+            <p>Quantidade de tijolos: #{orcamentoBean.orcamentoCalculado.quantidadeTijolosTotal}</p>
+        </h:panelGroup>
+
+    </h:form>
+</h:body>
+</html>

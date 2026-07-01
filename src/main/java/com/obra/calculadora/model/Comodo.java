@@ -18,6 +18,11 @@ public class Comodo {
     @ManyToMany
     private List<Aresta> paredes;
 
+    // NOVO: liga o cômodo ao orçamento ao qual ele pertence
+    @ManyToOne
+    @JoinColumn(name = "orcamento_id")
+    private Orcamento orcamento;
+
     public Comodo() {
     }
 
@@ -67,5 +72,14 @@ public class Comodo {
 
     public void setParedes(List<Aresta> paredes) {
         this.paredes = paredes;
+    }
+
+    // NOVO: getter/setter do orçamento
+    public Orcamento getOrcamento() {
+        return orcamento;
+    }
+
+    public void setOrcamento(Orcamento orcamento) {
+        this.orcamento = orcamento;
     }
 }
